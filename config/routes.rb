@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   resources(
     :toys,
     defaults: {format: :json},
-    only: [:show, :update]
+    only: [:show, :update, :destroy]
   )
 
 

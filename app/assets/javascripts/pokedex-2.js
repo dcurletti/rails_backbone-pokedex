@@ -11,6 +11,7 @@ Pokedex.RootView.prototype.addToyToList = function (toy) {
 };
 
 Pokedex.RootView.prototype.renderToyDetail = function (toy) {
+  var pokes = this.pokes;
   var $div = $("<div>")
                 .addClass("detail")
                 .append("<img src='" + toy.attributes.image_url + "'>");
@@ -24,6 +25,22 @@ Pokedex.RootView.prototype.renderToyDetail = function (toy) {
     }
   })
 
+  var $select = $("<select>").addClass("select-pokes");
+  pokes.forEach( function (poke) {
+    var $option = $("<option>")
+          .val(poke.get("id"))
+          .text(poke.get("name"))
+          .attr("data-toy-id", toy.get("id"))
+          .attr("data-pokemon-id", toy.get("pokemon_id"));
+
+    if (poke.get("id") === toy.get("pokemon_id")) {
+      $option.prop("selected", true);
+    }
+
+    $select.append($option)
+  })
+
+  $div.append($select);
   this.$toyDetail.html($div);
 };
 
@@ -38,3 +55,24 @@ Pokedex.RootView.prototype.selectToyFromList = function (event) {
 
   this.renderToyDetail(toy);
 };
+
+
+Pokedex.RootView.prototype.reassignToy = function(event){
+  var that = this;
+  var $target = $(event.target);
+  var $selected = $target.find(":selected");
+  var old_pokemon_id = $selected.attr("data-pokemon-id");
+  var new_pokemon_id = $selected.val();
+  var toy_id = $selected.attr("data-toy-id");
+  var old_pokemon = this.pokes.get(old_pokemon_id);
+  var toy = old_pokemon.toys().get(toy_id);
+  toy.set("pokemon_id", new_pokemon_id);
+  toy.save({}, {
+    success: function () {
+      old_pokemon.toys().remove(toy);
+      that.renderPokemonDetail(old_pokemon);
+      that.$toyDetail.empty();
+    }
+  })
+
+}

@@ -20,7 +20,7 @@ Pokedex.Models.Pokemon = Backbone.Model.extend({
 }); // WRITE ME
 
 Pokedex.Models.Toy = Backbone.Model.extend({
-
+  urlRoot: "/toys"
 }); // WRITE ME IN PHASE 2
 
 Pokedex.Collections.Pokemon = Backbone.Collection.extend({
@@ -29,6 +29,7 @@ Pokedex.Collections.Pokemon = Backbone.Collection.extend({
 }); // WRITE ME
 
 Pokedex.Collections.PokemonToys = Backbone.Collection.extend({
+  url: "/toys",
   model: Pokedex.Models.Toy
 }); // WRITE ME IN PHASE 2
 
@@ -73,6 +74,10 @@ window.Pokedex.RootView = function ($el) {
 
   this.$pokeDetail.on("click", function(event) {
     return that.selectToyFromList(event);
+  })
+
+  this.$toyDetail.on("change", "select", function (event) {
+    return that.reassignToy(event);
   })
 };
 
